@@ -1,66 +1,186 @@
-input{
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #020617 0%, #0b1120 45%, #111827 100%);
+  color: #f8fafc;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+}
+
+h1 {
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  text-align: center;
+  margin: 0 0 18px;
+}
+
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  color: #f97316;
+}
+
+input,
+select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background-color: rgba(15, 23, 42, 0.75);
+  color: #f8fafc;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.25);
+  outline: none;
+}
+
+input::placeholder {
+  color: rgba(226, 232, 240, 0.6);
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(248, 250, 252, 0.8);
+  margin-bottom: 6px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   width: 100%;
 }
 
-.input-container{
+.form {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-.form{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #eeeeee;
+  align-items: stretch;
+  gap: 16px;
+  padding: 28px;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.65);
+  backdrop-filter: blur(8px);
 }
 
-button{
-  padding: 10px;
-  border-radius: 5px;
+button {
+  padding: 12px 18px;
+  border-radius: 999px;
   border: none;
-  background-color: #333;
-  color: white;
+  background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
-.clientes{
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(249, 115, 22, 0.35);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.app-container {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 20px;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  width: min(960px, 100%);
+  align-items: stretch;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+thead {
+  background: rgba(15, 23, 42, 0.9);
+}
+
+th,
+td {
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+th {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(248, 250, 252, 0.7);
+}
+
+td:first-child {
+  text-align: left;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+tbody tr:hover {
+  background: rgba(249, 115, 22, 0.08);
+}
+
+ul {
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+ul li {
+  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.65);
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
-.cliente{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  width: 300px;
-}
+@media (max-width: 768px) {
+  body {
+    padding: 24px 16px;
+  }
 
-.app-container{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  .form {
+    padding: 22px;
+  }
+
+  table,
+  ul li {
+    font-size: 0.9rem;
+  }
 }
 

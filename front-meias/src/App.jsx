@@ -1,8 +1,9 @@
-// App.jsx — SPA mínima "meia meia meia" (React + axios)
+// App.jsx — SPA "CrossFit Coxão do Santinho" (React + axios)
 // Entregas: 4 (login), 5 (principal), 6 (cadastro produto), 7 (gestão de estoque)
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import "./App.css";
+import "./App.css"
+
 
 const API = axios.create({
   baseURL: "http://localhost:3000",
@@ -68,11 +69,11 @@ export default function App() {
   const carregarProdutos = async (term = q) => {
     setLoadingProdutos(true);
     try {
-      const url = notEmpty(term) ? `/produtos?q=${encodeURIComponent(term)}` : "/produtos";
+      const url = notEmpty(term) ? `/materiais?q=${encodeURIComponent(term)}` : "/materiais";
       const { data } = await API.get(url);
       setProdutos(Array.isArray(data) ? data : []);
     } catch (e) {
-      alert("Erro ao carregar produtos");
+      console.log(e)
     } finally {
       setLoadingProdutos(false);
     }
@@ -95,7 +96,7 @@ export default function App() {
 
   const validarProdutoForm = () => {
     const { nome, quantidade, estoque_minimo } = produtoForm;
-    if (!notEmpty(nome)) return "Informe o nome do produto.";
+    if (!notEmpty(nome)) return "Informe o nome do equipamento.";
     if (toInt(quantidade) < 0) return "Quantidade não pode ser negativa.";
     if (toInt(estoque_minimo) < 0) return "Estoque mínimo não pode ser negativo.";
     return null;
@@ -106,7 +107,7 @@ export default function App() {
     const msg = validarProdutoForm();
     if (msg) return alert(msg);
     try {
-      await API.post("/produtos", {
+      await API.post("/materiais", {
         nome: produtoForm.nome.trim(),
         quantidade: toInt(produtoForm.quantidade),
         estoque_minimo: toInt(produtoForm.estoque_minimo),
@@ -114,7 +115,7 @@ export default function App() {
       await carregarProdutos();
       limparProdutoForm();
     } catch (e) {
-      alert(e?.response?.data?.error || "Erro ao criar produto");
+      alert(e?.response?.data?.error || "Erro ao criar equipamento");
     }
   };
 
@@ -133,7 +134,7 @@ export default function App() {
     const msg = validarProdutoForm();
     if (msg) return alert(msg);
     try {
-      await API.put(`/produtos/${editandoId}`, {
+      await API.put(`/materiais/${editandoId}`, {
         nome: produtoForm.nome.trim(),
         quantidade: toInt(produtoForm.quantidade),
         estoque_minimo: toInt(produtoForm.estoque_minimo),
@@ -141,18 +142,18 @@ export default function App() {
       await carregarProdutos();
       limparProdutoForm();
     } catch (e) {
-      alert(e?.response?.data?.error || "Erro ao salvar produto");
+      alert(e?.response?.data?.error || "Erro ao salvar equipamento");
     }
   };
 
   const excluirProduto = async (id) => {
-    if (!window.confirm("Excluir este produto?")) return;
+    if (!window.confirm("Excluir este equipamento?")) return;
     try {
-      await API.delete(`/produtos/${id}`);
+      await API.delete(`/materiais/${id}`);
       await carregarProdutos();
       // 6.1.5 — excluir
     } catch (e) {
-      alert(e?.response?.data?.error || "Erro ao excluir produto");
+      alert(e?.response?.data?.error || "Erro ao excluir equipamento");
     }
   };
 
@@ -173,25 +174,24 @@ export default function App() {
 
   const enviarMovimentacao = async () => {
     if (!user) return alert("Faça login.");
-    if (!movProdutoId) return alert("Selecione um produto.");
+    if (!movProdutoId) return alert("Selecione um equipamento.");
     if (!["entrada", "saida"].includes(movTipo)) return alert("Tipo inválido.");
     const qtd = toInt(movQuantidade);
     if (!(qtd > 0)) return alert("Informe uma quantidade > 0.");
 
     try {
       const payload = {
-        produto_id: Number(movProdutoId),
+        material_id: Number(movProdutoId),
         usuario_id: user.id,
         tipo: movTipo,
         quantidade: qtd,
         data_movimentacao: notEmpty(movData) ? new Date(movData).toISOString() : null, // 7.1.3
-        observacao: notEmpty(movObs) ? movObs.trim() : null,
       };
       const { data } = await API.post("/movimentacoes", payload);
       // data.produto.abaxo_do_minimo (do backend)
-      alert("Movimentação registrada com sucesso.");
+      alert("Movimento lançado com sucesso.");
       if (data?.produto?.abaixo_do_minimo) {
-        alert("⚠️ Estoque abaixo do mínimo para este produto!");
+        alert("⚠️ Estoque abaixo do mínimo para este equipamento!");
       }
       // atualizar listagem para refletir novo saldo
       await carregarProdutos();
@@ -209,12 +209,12 @@ export default function App() {
   // -------------------------------
   return (
     <div className="app-container">
-      <h1>meia meia meia — Gestão de Estoque</h1>
+      <h1>CrossFit Coxão do Santinho — Controle de Equipamentos</h1>
 
       {/* LOGIN (4) */}
       {view === "login" && (
         <section className="form" aria-label="login">
-          <h2>Login</h2>
+          <h2>Login da Equipe</h2>
           <div className="input-container">
             <label>Email</label>
             <input
@@ -231,7 +231,7 @@ export default function App() {
               type="password"
               value={loginSenha}
               onChange={(e) => setLoginSenha(e.target.value)}
-              placeholder="•••••••"
+              placeholder="senha do box"
               required
             />
           </div>
@@ -242,10 +242,10 @@ export default function App() {
       {/* HOME (5) */}
       {view === "home" && (
         <section className="form" aria-label="home">
-          <h2>Olá, {user?.nome}</h2>
+          <h2>Bem-vindo ao box, {user?.nome}</h2>
           <div style={{ display: "flex", gap: 10 }}>
-            <button onClick={() => setView("produtos")}>Cadastro de Produto</button>
-            <button onClick={() => setView("estoque")}>Gestão de Estoque</button>
+            <button onClick={() => setView("produtos")}>Cadastro de Equipamentos</button>
+            <button onClick={() => setView("estoque")}>Fluxo de Equipamentos</button>
             <button onClick={logout}>Sair</button>
           </div>
         </section>
@@ -254,13 +254,13 @@ export default function App() {
       {/* CADASTRO DE PRODUTO (6) */}
       {view === "produtos" && (
         <section className="form" aria-label="produtos">
-          <h2>Cadastro de Produto</h2>
+          <h2>Cadastro de Equipamento</h2>
 
           {/* busca (6.1.2) */}
           <form onSubmit={buscar} style={{ width: "100%", display: "flex", gap: 8 }}>
             <input
               type="text"
-              placeholder="Buscar por nome (ex.: arrastão)"
+              placeholder="Buscar por equipamento (ex.: kettlebell)"
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />
@@ -273,12 +273,12 @@ export default function App() {
           {/* form criar/editar (6.1.3–6.1.4–6.1.6) */}
           <div style={{ width: "100%", display: "grid", gap: 8 }}>
             <div className="input-container">
-              <label>Nome</label>
+              <label>Nome do equipamento</label>
               <input
                 type="text"
                 value={produtoForm.nome}
                 onChange={(e) => setProdutoForm((s) => ({ ...s, nome: e.target.value }))}
-                placeholder='ex.: "meia meia meia arrastão"'
+                placeholder='ex.: "Corda Naval Pro"'
                 required
               />
             </div>
@@ -308,7 +308,7 @@ export default function App() {
                   <button type="button" onClick={limparProdutoForm}>Cancelar</button>
                 </>
               ) : (
-                <button type="button" onClick={criarProduto}>Cadastrar produto</button>
+                <button type="button" onClick={criarProduto}>Cadastrar equipamento</button>
               )}
               <button type="button" onClick={() => setView("home")}>Voltar</button>
             </div>
@@ -321,10 +321,10 @@ export default function App() {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
-                    <th style={{ textAlign: "left" }}>Nome</th>
+                    <th style={{ textAlign: "left" }}>Equipamento</th>
                     <th>Qtd</th>
                     <th>Mín</th>
-                    <th>Alerta</th>
+                    <th>Status</th>
                     <th>Ações</th>
                   </tr>
                 </thead>
@@ -335,7 +335,7 @@ export default function App() {
                       <td style={{ textAlign: "center" }}>{p.quantidade}</td>
                       <td style={{ textAlign: "center" }}>{p.estoque_minimo}</td>
                       <td style={{ textAlign: "center" }}>
-                        {p.quantidade < p.estoque_minimo ? "⚠️" : "—"}
+                        {p.quantidade < p.estoque_minimo ? "⚠️ Crítico" : "OK"}
                       </td>
                       <td style={{ display: "flex", gap: 6, justifyContent: "center" }}>
                         <button type="button" onClick={() => iniciarEdicao(p)}>Editar</button>
@@ -344,7 +344,7 @@ export default function App() {
                     </tr>
                   ))}
                   {produtosOrdenados.length === 0 && (
-                    <tr><td colSpan={5}>Nenhum produto.</td></tr>
+                    <tr><td colSpan={5}>Nenhum equipamento cadastrado.</td></tr>
                   )}
                 </tbody>
               </table>
@@ -356,18 +356,18 @@ export default function App() {
       {/* GESTÃO DE ESTOQUE (7) */}
       {view === "estoque" && (
         <section className="form" aria-label="estoque">
-          <h2>Gestão de Estoque</h2>
+          <h2>Fluxo de Equipamentos</h2>
 
           {/* listagem alfabética (7.1.1) */}
           <div style={{ width: "100%" }}>
-            <h3>Produtos (ordem alfabética)</h3>
+            <h3>Equipamentos do box (A-Z)</h3>
             <ul style={{ listStyle: "none", paddingLeft: 0 }}>
               {produtosOrdenados.map((p) => (
                 <li key={p.id} style={{ display: "flex", gap: 8, alignItems: "center" }}>
                   <span style={{ width: "50%" }}>{p.nome}</span>
                   <span>Qtd: <b>{p.quantidade}</b></span>
                   <span>Mín: <b>{p.estoque_minimo}</b></span>
-                  <span>{p.quantidade < p.estoque_minimo ? "⚠️ Baixo" : ""}</span>
+                  <span>{p.quantidade < p.estoque_minimo ? "⚠️ Estoque baixo" : ""}</span>
                 </li>
               ))}
             </ul>
@@ -375,9 +375,9 @@ export default function App() {
 
           {/* formulário de movimentação (7.1.2–7.1.3–7.1.4) */}
           <div style={{ width: "100%", marginTop: 10 }}>
-            <h3>Registrar movimentação</h3>
+            <h3>Lançar movimentação</h3>
             <div className="input-container">
-              <label>Produto</label>
+              <label>Equipamento</label>
               <select
                 value={movProdutoId}
                 onChange={(e) => setMovProdutoId(e.target.value)}
@@ -417,19 +417,8 @@ export default function App() {
                 onChange={(e) => setMovData(e.target.value)}
               />
             </div>
-
-            <div className="input-container">
-              <label>Observação (opcional)</label>
-              <input
-                type="text"
-                value={movObs}
-                onChange={(e) => setMovObs(e.target.value)}
-                placeholder="Ex.: retirada para feira"
-              />
-            </div>
-
             <div style={{ display: "flex", gap: 8 }}>
-              <button type="button" onClick={enviarMovimentacao}>Registrar</button>
+              <button type="button" onClick={enviarMovimentacao}>Lançar</button>
               <button type="button" onClick={() => setView("home")}>Voltar</button>
             </div>
           </div>

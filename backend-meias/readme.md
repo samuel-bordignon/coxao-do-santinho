@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
   senha  TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS produtos (
+CREATE TABLE IF NOT EXISTS materiais (
   id              SERIAL PRIMARY KEY,
   nome            TEXT NOT NULL,
   quantidade      INTEGER NOT NULL DEFAULT 0,
@@ -76,13 +76,13 @@ CREATE TABLE IF NOT EXISTS produtos (
 
 CREATE TABLE IF NOT EXISTS movimentacoes (
   id                 SERIAL PRIMARY KEY,
-  produto_id         INTEGER NOT NULL REFERENCES produtos(id),
+  material_id         INTEGER NOT NULL REFERENCES materiais(id),
   usuario_id         INTEGER NOT NULL REFERENCES usuarios(id),
   tipo               TEXT NOT NULL,             -- 'entrada' | 'saida'
   quantidade         INTEGER NOT NULL,
-  data_movimentacao  TIMESTAMP NOT NULL DEFAULT NOW(),
-  observacao         TEXT
+  data_movimentacao  TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 ```
 
 ---
@@ -90,56 +90,69 @@ CREATE TABLE IF NOT EXISTS movimentacoes (
 ## 🌱 Dados iniciais (seeds)
 
 ```sql
--- Usuários (divulgadores)
 INSERT INTO usuarios (nome, email, senha) VALUES
   ('Ana Souza',  'ana@example.com',   '123'),
   ('Bruno Lima', 'bruno@example.com', '123'),
   ('Carla Dias', 'carla@example.com', '123')
 ON CONFLICT (email) DO NOTHING;
 
--- Produtos (modelos oficiais da "meia meia meia")
-INSERT INTO produtos (nome, quantidade, estoque_minimo) VALUES
-  ('meia meia meia arrastão', 40, 10),
-  ('499,5 (meia meia meia 3/4)', 60, 15),
-  ('000 (meia meia meia de cano invisível)', 25, 12)
+-- materiais (modelos oficiais da "meia meia meia")
+INSERT INTO materiais (nome, quantidade, estoque_minimo) VALUES
+  ('bola de ginástica', 40, 10),
+  ('tatame', 60, 15),
+  ('haltere', 25, 12)
 ON CONFLICT DO NOTHING;
 
 -- Movimentações (histórico inicial)
 -- Entradas iniciais (Ana)
-INSERT INTO movimentacoes (produto_id, usuario_id, tipo, quantidade, data_movimentacao, observacao) VALUES
-  ((SELECT id FROM produtos WHERE nome='meia meia meia arrastão'),
-   (SELECT id FROM usuarios WHERE email='ana@example.com'),
-   'entrada', 30, NOW() - INTERVAL '2 days', 'Compra inicial'),
-  ((SELECT id FROM produtos WHERE nome='499,5 (meia meia meia 3/4)'),
-   (SELECT id FROM usuarios WHERE email='ana@example.com'),
-   'entrada', 50, NOW() - INTERVAL '2 days', 'Compra inicial'),
-  ((SELECT id FROM produtos WHERE nome='000 (meia meia meia de cano invisível)'),
-   (SELECT id FROM usuarios WHERE email='ana@example.com'),
-   'entrada', 20, NOW() - INTERVAL '2 days', 'Compra inicial');
+    INSERT INTO movimentacoes (material_id, usuario_id, tipo, quantidade, data_movimentacao) VALUES
+    ((SELECT id FROM materiais WHERE nome='bola de ginástica'),
+    (SELECT id FROM usuarios WHERE email='ana@example.com'),
+    'entrada', 30, NOW() - INTERVAL '2 days'),
+    ((SELECT id FROM materiais WHERE nome='tatame'),
+    (SELECT id FROM usuarios WHERE email='ana@example.com'),
+    'entrada', 50, NOW() - INTERVAL '2 days'),
+    ((SELECT id FROM materiais WHERE nome='haltere'),
+    (SELECT id FROM usuarios WHERE email='ana@example.com'),
+    'entrada', 20, NOW() - INTERVAL '2 days');
 
--- Saídas (Bruno)
-INSERT INTO movimentacoes (produto_id, usuario_id, tipo, quantidade, data_movimentacao, observacao) VALUES
-  ((SELECT id FROM produtos WHERE nome='meia meia meia arrastão'),
-   (SELECT id FROM usuarios WHERE email='bruno@example.com'),
-   'saida', 6, NOW() - INTERVAL '1 day', 'Retirada para evento'),
-  ((SELECT id FROM produtos WHERE nome='499,5 (meia meia meia 3/4)'),
-   (SELECT id FROM usuarios WHERE email='bruno@example.com'),
-   'saida', 15, NOW() - INTERVAL '1 day', 'Retirada para feira'),
-  ((SELECT id FROM produtos WHERE nome='000 (meia meia meia de cano invisível)'),
-   (SELECT id FROM usuarios WHERE email='bruno@example.com'),
-   'saida', 4, NOW() - INTERVAL '1 day', 'Retirada para divulgação');
+    -- Saídas (Bruno)
+    -- Movimentações (histórico inicial)
+-- Entradas iniciais (Ana)
+    INSERT INTO movimentacoes (material_id, usuario_id, tipo, quantidade, data_movimentacao) VALUES
+    ((SELECT id FROM materiais WHERE nome='bola de ginástica'),
+    (SELECT id FROM usuarios WHERE email='ana@example.com'),
+    'entrada', 30, NOW() - INTERVAL '2 days'),
+    ((SELECT id FROM materiais WHERE nome='tatame'),
+    (SELECT id FROM usuarios WHERE email='ana@example.com'),
+    'entrada', 50, NOW() - INTERVAL '2 days'),
+    ((SELECT id FROM materiais WHERE nome='haltere'),
+    (SELECT id FROM usuarios WHERE email='ana@example.com'),
+    'entrada', 20, NOW() - INTERVAL '2 days');
 
--- Reposição (Carla)
-INSERT INTO movimentacoes (produto_id, usuario_id, tipo, quantidade, observacao) VALUES
-  ((SELECT id FROM produtos WHERE nome='meia meia meia arrastão'),
-   (SELECT id FROM usuarios WHERE email='carla@example.com'),
-   'entrada', 10, 'Devolução de kits'),
-  ((SELECT id FROM produtos WHERE nome='499,5 (meia meia meia 3/4)'),
-   (SELECT id FROM usuarios WHERE email='carla@example.com'),
-   'entrada', 20, 'Devolução de kits'),
-  ((SELECT id FROM produtos WHERE nome='000 (meia meia meia de cano invisível)'),
-   (SELECT id FROM usuarios WHERE email='carla@example.com'),
-   'entrada', 8, 'Devolução de kits');
+    -- Saídas (Bruno)
+    INSERT INTO movimentacoes (material_id, usuario_id, tipo, quantidade, data_movimentacao) VALUES
+    ((SELECT id FROM materiais WHERE nome='bola de ginástica'),
+    (SELECT id FROM usuarios WHERE email='bruno@example.com'),
+    'saida', 6, NOW() - INTERVAL '1 day'),
+    ((SELECT id FROM materiais WHERE nome='tatame'),
+    (SELECT id FROM usuarios WHERE email='bruno@example.com'),
+    'saida', 15, NOW() - INTERVAL '1 day'),
+    ((SELECT id FROM materiais WHERE nome='haltere'),
+    (SELECT id FROM usuarios WHERE email='bruno@example.com'),
+    'saida', 4, NOW() - INTERVAL '1 day');
+
+    -- Reposição (Carla)
+    INSERT INTO movimentacoes (material_id, usuario_id, tipo, quantidade) VALUES
+    ((SELECT id FROM materiais WHERE nome='bola de ginástica'),
+    (SELECT id FROM usuarios WHERE email='carla@example.com'),
+    'entrada', 10),
+    ((SELECT id FROM materiais WHERE nome='tatame'),
+    (SELECT id FROM usuarios WHERE email='carla@example.com'),
+    'entrada', 20),
+    ((SELECT id FROM materiais WHERE nome='haltere'),
+    (SELECT id FROM usuarios WHERE email='carla@example.com'),
+    'entrada', 8);
 ```
 
 ---
@@ -164,22 +177,8 @@ INSERT INTO movimentacoes (produto_id, usuario_id, tipo, quantidade, observacao)
 
 ---
 
-## 💡 Observações
 
-* A busca `/produtos?q=` agora **não usa `unaccent()`**, para evitar dependência de extensões PostgreSQL.
-* O alerta de estoque é disparado **somente quando `quantidade < estoque_minimo`**.
-* O backend **sempre confirma** a movimentação, exibindo o alerta de estoque logo após.
-* O projeto segue o padrão mínimo exigido pela **prova SAEP**, totalmente compatível com o frontend React criado para ela.
-
----
-
-## 📄 Licença
-
-Projeto sob licença MIT.
-
----
-
-Feito com 💙 por [rafaellindemann](https://github.com/rafaellindemann)
+Feito a partir do repositório **template-crud-meias** por [rafaellindemann](https://github.com/rafaellindemann/template-crud-meias)
 
 ---
 

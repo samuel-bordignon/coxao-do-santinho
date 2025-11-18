@@ -36,7 +36,7 @@ A aplicação utiliza **Axios** para consumir o backend REST (Node + Express + P
 ## 🛠️ Pré-requisitos
 
 - **Node.js** instalado
-- **Backend** da “meia meia meia” em execução (porta padrão: `http://localhost:3000`)
+- **Backend** em execução (porta padrão: `http://localhost:3000`)
   - Backend sugerido: Node + Express + PostgreSQL  
   - Banco: `saep_db`  
   - Tabelas: `usuarios`, `produtos`, `movimentacoes`
