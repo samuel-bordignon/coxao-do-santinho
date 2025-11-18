@@ -1,7 +1,6 @@
 
 ---
 
-git clone https://github.com/seu-usuario/template-crud-meias.git
 # CrossFit Coxao do Santinho - Controle de Equipamentos
 
 Aplicacao full-stack para gerenciar os equipamentos do box CrossFit Coxao do Santinho. O projeto cobre autenticacao da equipe, cadastro de itens, controle de saldo e registro de movimentacoes de entrada e saida.
