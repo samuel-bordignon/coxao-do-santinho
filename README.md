@@ -3,7 +3,7 @@
 
 # CrossFit Coxao do Santinho - Controle de Equipamentos
 
-Aplicacao full-stack para gerenciar os equipamentos do box CrossFit Coxao do Santinho. O projeto cobre autenticacao da equipe, cadastro de itens, controle de saldo e registro de movimentacoes de entrada e saida.
+Aplicação full-stack para gerenciar os equipamentos do box CrossFit Coxao do Santinho. O projeto cobre autenticacao da equipe, cadastro de itens, controle de saldo e registro de movimentacoes de entrada e saida.
 
 ## Ambiente de referencia
 
